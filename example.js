@@ -13,7 +13,7 @@ var scheduler = new RealScheduler((sch) => {
         if (sch.getNumberOfCalls() == 60) {
             sch.stop(); //stop the scheduler
             console.log("execution stopped");
+            //print some stats about scheduler's run
             console.log(scheduler.getStatistics());
         }
     }, 100); //repeat every 1000 milliseconds
-

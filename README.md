@@ -14,7 +14,6 @@ Usage
 ```javascript
 var RealScheduler = require('real-scheduler');
 
-
 /** create and run automatically
  *
  * @callback <function> a function (sch) => {} where sch is an enclosing scheduler instance
@@ -28,9 +27,10 @@ var scheduler = new RealScheduler((sch) => {
         if (sch.getNumberOfCalls() == 60) {
             sch.stop(); //stop the scheduler
             console.log("execution stopped");
+            //print some stats about scheduler's run
+            console.log(scheduler.getStatistics());
         }
-    }, 1000); //repeat every 1000 milliseconds
-
+    }, 100); //repeat every 1000 milliseconds
 
 ```
 
