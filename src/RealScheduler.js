@@ -28,6 +28,9 @@ class RealScheduler {
         this._syntheticTimeoutSum = 0;
         this._trueTimeElapsed = 0;
         this._numberOfCalls = 0;
+
+        this._stats = {delay: delay, numberOfCalls: 0, timeElapsed: 0, minDelta: 0, maxDelta: 0, deltaErrorCount: 0};
+
         this._runInternal(callback, this._delay);
 
 
@@ -44,8 +47,17 @@ class RealScheduler {
                 let timeDeviation = this._trueTimeElapsed - this._syntheticTimeoutSum;
                 debug("cc: %d te: %d  td: [%d]", this._numberOfCalls, this._trueTimeElapsed, timeDeviation);
 
+
+                //statistics update
+                if (timeDeviation < this._stats.minDelta)
+                    this._stats.minDelta = timeDeviation;
+                if (timeDeviation > this._stats.maxDelta)
+                    this._stats.maxDelta = timeDeviation;
+                this._stats.timeElapsed = this._trueTimeElapsed;
+                this._stats.numberOfCalls = this._numberOfCalls;
                 //deviation acceptance check
                 if (Math.abs(timeDeviation) > this._maxTimeDeviationAllowed) {
+                    this._stats.deltaErrorCount++;
                     debug(`time deviation too high [${timeDeviation}], max absolute allowed [${this._maxTimeDeviationAllowed}]`);
                 }
 
@@ -88,6 +100,10 @@ class RealScheduler {
      */
     getNumberOfCalls() {
         return this._numberOfCalls;
+    }
+
+    getStatistics() {
+        return this._stats;
     }
 }
 
