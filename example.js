@@ -19,4 +19,4 @@ var scheduler = new RealScheduler((sch) => {
             //print some stats about scheduler's run
             console.log(scheduler.getStatistics());
         }
-    }, 100); //repeat every 1000 milliseconds
+    }, 100); //repeat every 100 milliseconds
