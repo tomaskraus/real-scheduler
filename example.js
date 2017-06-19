@@ -1,19 +1,4 @@
-real-scheduler
-==================
-
-Executes your callback repeatedly. Unlike built-in [setInterval](https://nodejs.org/api/timers.html#timers_setinterval_callback_delay_args) method, real-scheduler avoids the excessive accumulation of timing errors in the long-run by making delay adjustments after each callback call.
-
-Installation
-------------
-
-`npm install real-scheduler`
-
-Usage
------
-
-```javascript
-var RealScheduler = require('real-scheduler');
-
+var RealScheduler = require('./src/RealScheduler');
 
 /** create and run automatically
  *
@@ -30,7 +15,4 @@ var scheduler = new RealScheduler((sch) => {
             console.log("execution stopped");
         }
     }, 1000); //repeat every 1000 milliseconds
-
-
-```
 

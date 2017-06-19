@@ -1,0 +1,29 @@
+{
+  "name": "real-scheduler",
+  "version": "0.0.1",
+  "description": "A more precise setInterval replacement",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomaskraus/real-scheduler.git"
+  },
+  "keywords": [
+    "scheduler",
+    "setInterval",
+    "timer",
+    "precise",
+    "realtime"
+  ],
+  "author": "Tomas Kraus <tomas.krausik@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tomaskraus/real-scheduler/issues"
+  },
+  "homepage": "https://github.com/tomaskraus/real-scheduler#readme",
+  "dependencies": {
+    "debug": "^2.6.8"
+  }
+}
