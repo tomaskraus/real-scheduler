@@ -4,7 +4,7 @@ var RealScheduler = require('./src/RealScheduler');
  *
  * @callback <function> a function (sch) => {} where sch is an enclosing scheduler instance
  *
- * @delay <number> The number of milliseconds to wait between callbacks
+ * @delay <number> The number of milliseconds to wait between callback calls
  */
 var scheduler = new RealScheduler((sch) => {
 

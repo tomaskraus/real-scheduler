@@ -5,7 +5,7 @@ var debug = require('debug')('RealScheduler');
 /**
  * Realtime scheduler
  * Tries to repeat the callback at the realtime.
- * Makes time corrections on the next handler call.
+ * Makes time corrections on the next callback call.
  *
  * @class RealScheduler
  */
