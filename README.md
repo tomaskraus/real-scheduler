@@ -35,7 +35,7 @@ var scheduler = new RealScheduler((sch) => {
 
 ```
 
-options
+Options
 -------
 
 You can pass an option object as the Scheduler constructor's 3rd parameter:
@@ -45,7 +45,7 @@ You can pass an option object as the Scheduler constructor's 3rd parameter:
 
 Following optional parameters are possible:
 
-* **waitForTheFirstCall** {boolean} - If true, waits for `delay` milliseconds before the first callback execution. Defaults `true`.
-* **onStop** {function} - A callback, called after a scheduler's `stop()` method is called. A function `(sch) => {}` where sch is an enclosing RealScheduler instance. Defaults `null`.
-* **onDeltaError** {function} - A callback, called after a time difference greater than `delay` occured. A function `(sch) => {}` where sch is an enclosing RealScheduler instance. Defaults `null`.
+* **waitForTheFirstCall** {boolean} - If true, waits for `delay` milliseconds before the first callback execution. Defaults to `true`.
+* **onStop** {function} - A callback, called after a scheduler's `stop()` method is called. A function `(sch) => {}` where `sch` is an enclosing RealScheduler instance. Defaults to `null`.
+* **onDeltaError** {function} - A callback, called after a time difference greater than `delay` occured. A function `(sch) => {}` where `sch` is an enclosing RealScheduler instance. Defaults to `null`.
 
