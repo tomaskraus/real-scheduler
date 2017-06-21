@@ -1,5 +1,10 @@
 var RealScheduler = require('./src/RealScheduler');
 
+
+var onStopHandler = function(sch) {
+    console.log("stopped. stats: ", sch.getStatistics());
+};
+
 /** create and run automatically
  *
  * @callback <function> a function (sch) => {} where sch is an enclosing scheduler instance
@@ -13,10 +18,10 @@ var scheduler = new RealScheduler((sch) => {
             ": Call count: " + sch.getNumberOfCalls()  // how many times this callback was called since the scheduler's start
         );
 
-        if (sch.getNumberOfCalls() == 60) {
+        if (sch.getNumberOfCalls() == 10) {
             sch.stop(); //stop the scheduler
-            console.log("execution stopped");
-            //print some stats about scheduler's run
-            console.log(scheduler.getStatistics());
         }
-    }, 100); //repeat every 100 milliseconds
+    }, 100 ,  //repeat every 100 milliseconds
+    { waitForTheFirstCall: false, onStop: onStopHandler, onDeltaError: (sch) => {console.log("ERROR"); sch.stop()}}
+);
+
