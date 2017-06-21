@@ -55,7 +55,7 @@ class RealScheduler {
         this._wantStop = false;
 
         this._initialTimeMillis = new Date(); //in millis
-        this._syntheticTimeoutSum = 0;
+        this._syntheticTimeElapsed = 0;
         this._trueTimeElapsed = 0;
         this._numberOfCalls = 0;
 
@@ -79,9 +79,9 @@ class RealScheduler {
             this._runnerId = setTimeout(() => {
                 this._numberOfCalls++;
                 this._trueTimeElapsed = (new Date()) - this._initialTimeMillis;
-                this._syntheticTimeoutSum += this._delay;
-                let timeDeviation = this._trueTimeElapsed - this._syntheticTimeoutSum;
-                debug("cc: %d te: %d  td: [%d]", this._numberOfCalls, this._trueTimeElapsed, timeDeviation);
+                this._syntheticTimeElapsed += this._delay;
+                let timeDeviation = this._trueTimeElapsed - this._syntheticTimeElapsed;
+                debug("cc: %d te|ste: %d|%d  td: [%d]", this._numberOfCalls, this._trueTimeElapsed, this._syntheticTimeElapsed, timeDeviation);
 
 
                 //statistics update
@@ -133,6 +133,17 @@ class RealScheduler {
     getTimeElapsed() {
         return this._trueTimeElapsed;
     }
+
+    /**
+     *
+     *
+     * @returns {number} - Synthetic time period elapsed since the scheduler's start (in milliseconds) It equals delay*numberOfWaits
+     * @memberof RealScheduler
+     */
+    getSyntheticTimeElapsed() {
+        return this._syntheticTimeElapsed;
+    }
+
 
     /**
      *

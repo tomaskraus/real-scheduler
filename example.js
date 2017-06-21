@@ -14,7 +14,7 @@ var onStopHandler = function(sch) {
 var scheduler = new RealScheduler((sch) => {
 
         console.log(
-            sch.getTimeElapsed() +   // a real, accumulated time since the scheduler start
+            sch.getTimeElapsed() + "|" + sch.getSyntheticTimeElapsed() + // a real, accumulated time since the scheduler start
             ": Call count: " + sch.getNumberOfCalls()  // how many times this callback was called since the scheduler's start
         );
 
@@ -22,6 +22,6 @@ var scheduler = new RealScheduler((sch) => {
             sch.stop(); //stop the scheduler
         }
     }, 100 ,  //repeat every 100 milliseconds
-    { waitForTheFirstCall: false, onStop: onStopHandler, onDeltaError: (sch) => {console.log("ERROR"); sch.stop()}}
+    { waitForTheFirstCall: true, onStop: onStopHandler, onDeltaError: (sch) => {console.log("ERROR"); sch.stop()}}
 );
 
