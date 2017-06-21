@@ -17,6 +17,9 @@
     "precise",
     "realtime"
   ],
+  "engines": {
+    "node": ">=4"
+  },
   "author": "Tomas Kraus <tomas.krausik@gmail.com>",
   "license": "MIT",
   "bugs": {
