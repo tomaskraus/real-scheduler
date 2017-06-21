@@ -11,29 +11,27 @@ Installation
 Usage
 -----
 
+executes a `callback` every `delay` milliseconds:
+```javascript
+    new RealScheduler(callback, delay);
+```
+
+complete example
 ```javascript
 var RealScheduler = require('real-scheduler');
 
-/** create and run automatically
- *
- * @callback <function> a function (sch) => {} where sch is an enclosing scheduler instance
- *
- * @delay <number> The number of milliseconds to wait between callbacks
- */
+// create a Scheduler and run it automatically
+// sch is a Scheduler's instance passed to a callback function
 var scheduler = new RealScheduler((sch) => {
-
         console.log(
-            sch.getTimeElapsed() +   // a real, accumulated time since the scheduler start
+            sch.getTimeElapsed() +   // a real, accumulated time since the scheduler's start
             ": Call count: " + sch.getNumberOfCalls()  // how many times this callback was called since the scheduler's start
         );
-
         if (sch.getNumberOfCalls() == 60) {
             sch.stop(); //stop the scheduler
-            console.log("execution stopped");
-            //print some stats about scheduler's run
-            console.log(scheduler.getStatistics());
         }
-    }, 100); //repeat every 100 milliseconds
+    },
+    100); //repeat every 100 milliseconds
 
 ```
 
