@@ -43,8 +43,8 @@ class RealScheduler {
     * @param {number} delay - The number of milliseconds to wait between callback calls
     * @param {object} options - Scheduler's options, with the following optional fields:
     *  * waitForTheFirstCall {boolean} - If true, waits for [delay] milliseconds before the first callback execution. Defaults true.
-    *  * onStop: null {function} - A callback, called after a scheduler's stop() method is called. A function (sch) => {} where sch is an enclosing RealScheduler instance. Defaults null.
-    *  * onDeltaError: {function} - A callback, called after a time difference greater than [delay] occured. A function (sch) => {} where sch is an enclosing RealScheduler instance. Defaults null.
+    *  * onStop {function} - A callback, called after a scheduler's stop() method is called. A function (sch) => {} where sch is an enclosing RealScheduler instance. Defaults null.
+    *  * onDeltaError {function} - A callback, called after a time difference greater than [delay] occured. A function (sch) => {} where sch is an enclosing RealScheduler instance. Defaults null.
     *
     * @memberof RealScheduler
     */
