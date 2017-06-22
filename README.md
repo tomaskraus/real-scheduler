@@ -11,26 +11,41 @@ Installation
 Usage
 -----
 
+executes a `callback` every `delay` milliseconds:
+```javascript
+    new RealScheduler(callback, delay);
+```
+
+complete example
 ```javascript
 var RealScheduler = require('real-scheduler');
 
-
-/** create and run automatically
- *
- * @callback <function> a function (sch) => {} where sch is an enclosing scheduler instance
- *
- * @delay <number> The number of milliseconds to wait between callbacks
- */
+// create a Scheduler and run it automatically
+// sch is a Scheduler's instance passed to a callback function
 var scheduler = new RealScheduler((sch) => {
-        // how many times this callback was called since the scheduler's start
-        console.log(sch.getTimeElapsed() + ": Call count: " + sch.getNumberOfCalls());
-        // a real, accumulated time since the scheduler start
+        console.log(
+            sch.getTimeElapsed() +   // a real, accumulated time since the scheduler's start
+            ": Call count: " + sch.getNumberOfCalls()  // how many times this callback was called since the scheduler's start
+        );
         if (sch.getNumberOfCalls() == 60) {
             sch.stop(); //stop the scheduler
-            console.log("execution stopped");
         }
-    }, 1000); //repeat every 1000 milliseconds
-
+    },
+    100); //repeat every 100 milliseconds
 
 ```
+
+Options
+-------
+
+You can pass an option object as the Scheduler constructor's 3rd parameter:
+```javascript
+    new RealScheduler(callback, delay, {waitForTheFirstCall: false, onStop: myOnStopHandler});
+```
+
+Following optional parameters are possible:
+
+* **waitForTheFirstCall** {boolean} - If true, waits for `delay` milliseconds before the first callback execution. Defaults to `true`.
+* **onStop** {function} - A callback, called after a scheduler's `stop()` method is called. A function `(sch) => {}` where `sch` is an enclosing RealScheduler instance. Defaults to `null`.
+* **onDeltaError** {function} - A callback, called after a time difference greater than `delay` occured. A function `(sch) => {}` where `sch` is an enclosing RealScheduler instance. Defaults to `null`.
 
