@@ -1,7 +1,7 @@
 real-scheduler
 ==================
 
-Executes your callback repeatedly. Unlike built-in [setInterval](https://nodejs.org/api/timers.html#timers_setinterval_callback_delay_args) method, real-scheduler avoids the excessive accumulation of timing errors in the long-run by making delay adjustments after each callback call.
+Executes your callback repeatedly. Unlike the built-in [setInterval](https://nodejs.org/api/timers.html#timers_setinterval_callback_delay_args) method, real-scheduler avoids the excessive accumulation of timing errors in the long-run by making delay adjustments after each callback call.
 
 Installation
 ------------
@@ -38,7 +38,7 @@ var scheduler = new RealScheduler((sch) => {
 Options
 -------
 
-You can pass an option object as the Scheduler constructor's 3rd parameter:
+You can pass an options object as the Scheduler constructor's 3rd parameter:
 ```javascript
     new RealScheduler(callback, delay, {waitForTheFirstCall: false, onStop: myOnStopHandler});
 ```
