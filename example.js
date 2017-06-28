@@ -14,14 +14,17 @@ var onStopHandler = function(sch) {
 var scheduler = new RealScheduler((sch) => {
 
         console.log(
-            sch.getTimeElapsed() + "|" + sch.getSyntheticTimeElapsed() + // a real, accumulated time since the scheduler start
-            ": Call count: " + sch.getNumberOfCalls()  // how many times this callback was called since the scheduler's start
+            // a real, accumulated time since the scheduler start
+            sch.getTimeElapsed() + "|" + sch.getSyntheticTimeElapsed() +
+            // how many times this callback was called since the scheduler's start
+            ": Call count: " + sch.getNumberOfCalls()
         );
 
         if (sch.getNumberOfCalls() == 10) {
             sch.stop(); //stop the scheduler
         }
     }, 100 ,  //repeat every 100 milliseconds
-    { waitForTheFirstCall: true, onStop: onStopHandler, onDeltaError: (sch) => {console.log("ERROR"); sch.stop()}}
+    { waitForTheFirstCall: true, onStop: onStopHandler,
+        onDeltaError: (sch) => {console.log("ERROR"); sch.stop()}}
 );
 
