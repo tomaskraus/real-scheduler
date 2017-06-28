@@ -2,6 +2,7 @@ real-scheduler
 ==================
 
 [![Build Status](https://travis-ci.org/tomaskraus/real-scheduler.svg?branch=master)](https://travis-ci.org/tomaskraus/real-scheduler/)
+[![Coverage Status](https://coveralls.io/repos/github/tomaskraus/real-scheduler/badge.svg)](https://coveralls.io/github/tomaskraus/real-scheduler)
 
 Executes your callback repeatedly. Unlike the built-in [setInterval](https://nodejs.org/api/timers.html#timers_setinterval_callback_delay_args) method, real-scheduler avoids the excessive accumulation of timing errors in the long-run by making delay adjustments after each callback call.
 
