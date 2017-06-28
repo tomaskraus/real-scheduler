@@ -4,7 +4,8 @@
   "description": "A more precise setInterval replacement",
   "main": "src/RealScheduler.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nyc --reporter=lcov tap -Rspec test/*.js",
+    "makedoc": "jsdoc -c jsdocconf.json ./src/"
   },
   "repository": {
     "type": "git",
@@ -28,5 +29,10 @@
   "homepage": "https://github.com/tomaskraus/real-scheduler#readme",
   "dependencies": {
     "debug": "^2.6.8"
+  },
+  "devDependencies": {
+    "istanbul": "^0.4.5",
+    "nyc": "^11.0.3",
+    "tap": "^10.7.0"
   }
 }

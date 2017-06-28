@@ -26,6 +26,8 @@ var setOptionsFromParam = function(options) {
  * Executes your callback repeatedly.
  * Unlike built-in [setInterval] method, real-scheduler avoids the excessive accumulation of timing errors in the long-run by making delay adjustments after each callback call.
  *
+ * The scheduler uses the setInterval function internally, so you should be aware of 'this' context in callbacks.
+ *
  * To end the scheduler, call its stop() method.
  *
  * Some scheduler options are available, such as:
@@ -39,12 +41,12 @@ class RealScheduler {
    /**
     * Creates an instance of RealScheduler and runs it immediately
     *
-    * @param {function} callback - A function (sch) => {} where sch is an enclosing RealScheduler instance
+    * @param {function} callback - A function to be executed repeatedly. Has a form of `(sch) => {}` where `sch` is an enclosing RealScheduler instance
     * @param {number} delay - The number of milliseconds to wait between callback calls
-    * @param {object} options - Scheduler's options, with the following optional fields:
-    *  * waitForTheFirstCall {boolean} - If true, waits for [delay] milliseconds before the first callback execution. Defaults true.
-    *  * onStop {function} - A callback, called after a scheduler's stop() method is called. A function (sch) => {} where sch is an enclosing RealScheduler instance. Defaults null.
-    *  * onDeltaError {function} - A callback, called after a time difference greater than [delay] occured. A function (sch) => {} where sch is an enclosing RealScheduler instance. Defaults null.
+    * @param {object} [options] - Scheduler's options, with the following optional fields:
+    * * **waitForTheFirstCall** {boolean} - If true, waits for `delay` milliseconds before the first callback execution. Defaults to `true`.
+    * * **onStop** {function} - A callback, called after a scheduler's `stop()` method is called. A function `(sch) => {}` where `sch` is an enclosing RealScheduler instance. Defaults to `null`.
+    * * **onDeltaError** {function} - A callback, called after a time difference greater than `delay` occured. A function `(sch) => {}` where `sch` is an enclosing RealScheduler instance. Defaults to `null`.
     *
     * @memberof RealScheduler
     */
