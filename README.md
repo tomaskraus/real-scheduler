@@ -47,6 +47,12 @@ You can pass an options object as the Scheduler constructor's 3rd parameter:
 ```javascript
     new RealScheduler(callback, delay, {waitForTheFirstCall: false,
     onStop: myOnStopHandler});
+
+    // sch is a Scheduler's instance
+    var myOnStopHandler = function(sch) {
+        console.log("on stop called");
+    }
+
 ```
 
 Following optional parameters are possible:
