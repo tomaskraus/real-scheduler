@@ -4,7 +4,7 @@
   "description": "A more precise setInterval replacement",
   "main": "src/RealScheduler.js",
   "scripts": {
-    "test": "nyc --reporter=lcov tap test/*.js",
+    "test": "nyc --reporter=lcov tap -Rspec test/*.js",
     "makedoc": "jsdoc -c jsdocconf.json ./src/"
   },
   "repository": {
