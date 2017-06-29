@@ -24,7 +24,7 @@ var setOptionsFromParam = function(options) {
  * Realtime scheduler
  *
  * Executes your callback repeatedly.
- * Unlike built-in [setInterval] method, real-scheduler avoids the excessive accumulation of timing errors in the long-run by making delay adjustments after each callback call.
+ * Unlike the built-in [setInterval](https://nodejs.org/api/timers.html#timers_setinterval_callback_delay_args) method, real-scheduler avoids the excessive accumulation of timing errors in the long-run by making delay adjustments after each callback call.
  *
  * The scheduler uses the setInterval function internally, so you should be aware of 'this' context in callbacks.
  *
