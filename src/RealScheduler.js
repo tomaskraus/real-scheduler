@@ -1,7 +1,7 @@
 "use strict";
 
 var debug = require('debug')('RealScheduler');
-
+var assert = require('assert');
 
 var defaultOptions = {
     waitForTheFirstCall: true,     //if true, waits for [delay] milliseconds before the first callback execution
@@ -15,8 +15,11 @@ var setOptionsFromParam = function(options) {
     //TODO: check param types
 
     opts.waitForTheFirstCall = options.hasOwnProperty('waitForTheFirstCall') ? options.waitForTheFirstCall : defaultOptions.waitForTheFirstCall;
+    assert(typeof opts.waitForTheFirstCall === 'boolean', 'RealScheduler parameter [waitForTheFirstCall] must be boolean');
     opts.onStop = options.onStop || defaultOptions.onStop;
+    assert(typeof opts.onStop === 'function' || opts.onStop === null, 'RealScheduler parameter [onStop] must be function');
     opts.onDeltaError = options.onDeltaError || defaultOptions.onDeltaError;
+    assert(typeof opts.onDeltaError === 'function' || opts.onDeltaError === null, 'RealScheduler parameter [onDeltaError] must be function');
     return opts;
 }
 
@@ -51,6 +54,10 @@ class RealScheduler {
     * @memberof RealScheduler
     */
     constructor(callback, delay, options) {
+        assert(typeof callback === 'function', 'RealScheduler parameter [callback] must be function');
+        assert(typeof delay === 'number' && delay >= 0, 'RealScheduler parameter [delay] must be non-negative number');
+        assert(typeof options === 'object' || 'undefined', 'RealScheduler parameter [options] must be object');
+
         this._delay = delay;
         this._maxTimeDeviationAllowed = delay;
         this._runnerId = null;
