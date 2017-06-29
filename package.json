@@ -1,6 +1,6 @@
 {
   "name": "real-scheduler",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A more precise setInterval replacement",
   "main": "src/RealScheduler.js",
   "scripts": {
