@@ -5,6 +5,7 @@
   "main": "src/RealScheduler.js",
   "scripts": {
     "testlocal": "tap -Rspec test/*.js",
+    "testlocalcoverage": "nyc --reporter=lcov tap -Rspec test/*.js",
     "makedoc": "jsdoc -c jsdocconf.json -d jsdoc ./src/",
     "test": "nyc --reporter=text-lcov tap -Rspec test/*.js | coveralls"
   },
