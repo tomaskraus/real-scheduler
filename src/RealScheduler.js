@@ -1,35 +1,45 @@
-"use strict";
 
-var debug = require('debug')('RealScheduler');
-var assert = require('assert');
 
-var defaultOptions = {
-    waitForTheFirstCall: true,     //if true, waits for [delay] milliseconds before the first callback execution
-    onStop: null,   //callback, called after a scheduler's stop() method is called. A function (sch) => {} where sch is an enclosing RealScheduler instance
-    onDeltaError: null //callback, called after a time difference greater than [delay] occured. A function (sch) => {} where sch is an enclosing RealScheduler instance
+const debug = require('debug')('RealScheduler');
+const assert = require('assert');
+
+const defaultOptions = {
+
+  // if true, waits for [delay] milliseconds before the first callback execution
+  waitForTheFirstCall: true,
+
+  // callback, called after a scheduler's stop() method is called.
+  // A function (sch) => {} where sch is an enclosing RealScheduler instance
+  onStop: null,
+
+  // callback, called after a time difference greater than [delay] occured.
+  // A function (sch) => {} where sch is an enclosing RealScheduler instance
+  onDeltaError: null,
 };
 
-var setOptionsFromParam = function(options) {
-    options = options || {};
-    var opts = {};
-    //TODO: check param types
+function setOptionsFromParam(options = {}) {
+  const opts = {};
+  // TODO: check param types
 
-    opts.waitForTheFirstCall = options.hasOwnProperty('waitForTheFirstCall') ? options.waitForTheFirstCall : defaultOptions.waitForTheFirstCall;
-    assert(typeof opts.waitForTheFirstCall === 'boolean', 'RealScheduler parameter [waitForTheFirstCall] must be boolean');
-    opts.onStop = options.onStop || defaultOptions.onStop;
-    assert(typeof opts.onStop === 'function' || opts.onStop === null, 'RealScheduler parameter [onStop] must be function');
-    opts.onDeltaError = options.onDeltaError || defaultOptions.onDeltaError;
-    assert(typeof opts.onDeltaError === 'function' || opts.onDeltaError === null, 'RealScheduler parameter [onDeltaError] must be function');
-    return opts;
+  opts.waitForTheFirstCall = Object.prototype.hasOwnProperty.call(options, 'waitForTheFirstCall') ? options.waitForTheFirstCall : defaultOptions.waitForTheFirstCall;
+  assert(typeof opts.waitForTheFirstCall === 'boolean', 'RealScheduler parameter [waitForTheFirstCall] must be boolean');
+  opts.onStop = options.onStop || defaultOptions.onStop;
+  assert(typeof opts.onStop === 'function' || opts.onStop === null, 'RealScheduler parameter [onStop] must be function');
+  opts.onDeltaError = options.onDeltaError || defaultOptions.onDeltaError;
+  assert(typeof opts.onDeltaError === 'function' || opts.onDeltaError === null, 'RealScheduler parameter [onDeltaError] must be function');
+  return opts;
 }
 
 /**
  * Realtime scheduler
  *
  * Executes your callback repeatedly.
- * Unlike the built-in [setInterval](https://nodejs.org/api/timers.html#timers_setinterval_callback_delay_args) method, real-scheduler avoids the excessive accumulation of timing errors in the long-run by making delay adjustments after each callback call.
+ * Unlike the built-in [setInterval](https://nodejs.org/api/timers.html#timerssetintervalcallbackdelayargs) method,
+ * real-scheduler avoids the excessive accumulation of timing errors in the long-run
+ * by making delay adjustments after each callback call.
  *
- * The scheduler uses the setInterval function internally, so you should be aware of 'this' context in callbacks.
+ * The scheduler uses the setInterval function internally, so you
+ * should be aware of 'this' context in callbacks.
  *
  * To end the scheduler, call its stop() method.
  *
@@ -40,149 +50,163 @@ var setOptionsFromParam = function(options) {
  * @class RealScheduler
  */
 class RealScheduler {
+  /**
+   * Creates an instance of RealScheduler and runs it immediately
+   *
+   * @param {function} callback - A function to be executed repeatedly. Has a
+   * form of `(sch) => {}` where `sch` is an enclosing RealScheduler instance
+   * @param {number} delay - The number of milliseconds to wait between callback calls
+   * @param {object} [options] - Scheduler's options, with the following optional fields:
+   * * **waitForTheFirstCall** {boolean} - If true, waits for `delay` milliseconds
+   * before the first callback execution. Defaults to `true`.
+   * * **onStop** {function} - A callback, called after a scheduler's `stop()`
+   * method is called. A function `(sch) => {}` where `sch` is an enclosing
+   * RealScheduler instance. Defaults to `null`.
+   * **onDeltaError** {function} - A callback, called after a time difference
+   * greater than `delay` occured. A function `(sch) => {}` where `sch` is an enclosing
+   * RealScheduler instance. Defaults to `null`.
+   *
+   * @memberof RealScheduler
+   */
+  constructor(callback, delay, options) {
+    assert(typeof callback === 'function', 'RealScheduler parameter [callback] must be function');
+    assert(typeof delay === 'number' && delay >= 0, 'RealScheduler parameter [delay] must be non-negative number');
+    assert(typeof options === 'object' || 'undefined', 'RealScheduler parameter [options] must be object');
 
-   /**
-    * Creates an instance of RealScheduler and runs it immediately
-    *
-    * @param {function} callback - A function to be executed repeatedly. Has a form of `(sch) => {}` where `sch` is an enclosing RealScheduler instance
-    * @param {number} delay - The number of milliseconds to wait between callback calls
-    * @param {object} [options] - Scheduler's options, with the following optional fields:
-    * * **waitForTheFirstCall** {boolean} - If true, waits for `delay` milliseconds before the first callback execution. Defaults to `true`.
-    * * **onStop** {function} - A callback, called after a scheduler's `stop()` method is called. A function `(sch) => {}` where `sch` is an enclosing RealScheduler instance. Defaults to `null`.
-    * * **onDeltaError** {function} - A callback, called after a time difference greater than `delay` occured. A function `(sch) => {}` where `sch` is an enclosing RealScheduler instance. Defaults to `null`.
-    *
-    * @memberof RealScheduler
-    */
-    constructor(callback, delay, options) {
-        assert(typeof callback === 'function', 'RealScheduler parameter [callback] must be function');
-        assert(typeof delay === 'number' && delay >= 0, 'RealScheduler parameter [delay] must be non-negative number');
-        assert(typeof options === 'object' || 'undefined', 'RealScheduler parameter [options] must be object');
+    this.delay = delay;
+    this.maxTimeDeviationAllowed = delay;
+    this.runnerId = null;
+    this.wantStop = false;
 
-        this._delay = delay;
-        this._maxTimeDeviationAllowed = delay;
-        this._runnerId = null;
-        this._wantStop = false;
+    this.initialTimeMillis = new Date(); // in millis
+    this.syntheticTimeElapsed = 0;
+    this.trueTimeElapsed = 0;
+    this.numberOfCalls = 0;
 
-        this._initialTimeMillis = new Date(); //in millis
-        this._syntheticTimeElapsed = 0;
-        this._trueTimeElapsed = 0;
-        this._numberOfCalls = 0;
+    this.stats = {
+      delay,
+      numberOfCalls: 0,
+      timeElapsed: 0,
+      minDelta: 0,
+      maxDelta: 0,
+      deltaErrorCount: 0,
+    };
 
-        this._stats = {delay: delay, numberOfCalls: 0, timeElapsed: 0, minDelta: 0, maxDelta: 0, deltaErrorCount: 0};
+    this.options = setOptionsFromParam(options);
 
-        this._options = setOptionsFromParam(options);
+    if (this.options.waitForTheFirstCall === false) {
+      this.numberOfCalls += 1;
+      callback(this);
+    }
+    this.runInternal(callback, this.delay);
 
-        if (this._options.waitForTheFirstCall === false) {
-            this._numberOfCalls++;
-            callback(this);
+
+    debug('CREATED  delay set to [%d] options: %o', this.delay, this.options);
+  }
+
+
+  runInternal(callback, timeout) {
+    if (!this.wantStop) {
+      this.runnerId = setTimeout(() => {
+        this.numberOfCalls += 1;
+        this.trueTimeElapsed = (new Date()) - this.initialTimeMillis;
+        this.syntheticTimeElapsed += this.delay;
+        const timeDeviation = this.trueTimeElapsed - this.syntheticTimeElapsed;
+        debug('cc: %d te|ste: %d|%d  td: [%d]', this.numberOfCalls, this.trueTimeElapsed, this.syntheticTimeElapsed, timeDeviation);
+
+
+        // statistics update
+        if (timeDeviation < this.stats.minDelta) {
+          this.stats.minDelta = timeDeviation;
         }
-        this._runInternal(callback, this._delay);
-
-
-        debug(`CREATED  delay set to [%d] options: %o`, this._delay, this._options);
-    }
-
-
-    _runInternal (callback, timeout) {
-        if (!this._wantStop) {
-            this._runnerId = setTimeout(() => {
-                this._numberOfCalls++;
-                this._trueTimeElapsed = (new Date()) - this._initialTimeMillis;
-                this._syntheticTimeElapsed += this._delay;
-                let timeDeviation = this._trueTimeElapsed - this._syntheticTimeElapsed;
-                debug("cc: %d te|ste: %d|%d  td: [%d]", this._numberOfCalls, this._trueTimeElapsed, this._syntheticTimeElapsed, timeDeviation);
-
-
-                //statistics update
-                if (timeDeviation < this._stats.minDelta)
-                    this._stats.minDelta = timeDeviation;
-                if (timeDeviation > this._stats.maxDelta)
-                    this._stats.maxDelta = timeDeviation;
-                this._stats.timeElapsed = this._trueTimeElapsed;
-                this._stats.numberOfCalls = this._numberOfCalls;
-                //deviation acceptance check
-                if (Math.abs(timeDeviation) > this._maxTimeDeviationAllowed) {
-                    this._stats.deltaErrorCount++;
-                    debug(`time deviation too high [${timeDeviation}], max absolute allowed [${this._maxTimeDeviationAllowed}]`);
-                    if (this._options.onDeltaError !== null) {
-                        this._options.onDeltaError(this);
-                    }
-                }
-
-                if (!this._wantStop) {
-                    this._runInternal(callback, Math.max(0, timeout - (timeDeviation)));
-                    callback(this);
-                }
-            }, timeout);
+        if (timeDeviation > this.stats.maxDelta) {
+          this.stats.maxDelta = timeDeviation;
+        }
+        this.stats.timeElapsed = this.trueTimeElapsed;
+        this.stats.numberOfCalls = this.numberOfCalls;
+        // deviation acceptance check
+        if (Math.abs(timeDeviation) > this.maxTimeDeviationAllowed) {
+          this.stats.deltaErrorCount += 1;
+          debug(`time deviation too high [${timeDeviation}], max absolute allowed [${this.maxTimeDeviationAllowed}]`);
+          if (this.options.onDeltaError !== null) {
+            this.options.onDeltaError(this);
+          }
         }
 
-    }
-
-    /**
-     * Stops the scheduler execution, so its next callback will not be called
-     *
-     * @memberof RealScheduler
-     */
-    stop() {
-        this._wantStop = true;
-        if (this._runnerId !== null) {
-            clearTimeout(this._runnerId);
+        if (!this.wantStop) {
+          this.runInternal(callback, Math.max(0, timeout - (timeDeviation)));
+          callback(this);
         }
-        if (this._options.onStop !== null) {
-            this._options.onStop(this);
-        }
+      }, timeout);
     }
+  }
 
-    /**
-     *
-     *
-     * @returns {number} - The time period elapsed since the scheduler's start (in milliseconds)
-     * @memberof RealScheduler
-     */
-    getTimeElapsed() {
-        return this._trueTimeElapsed;
+  /**
+   * Stops the scheduler execution, so its next callback will not be called
+   *
+   * @memberof RealScheduler
+   */
+  stop() {
+    this.wantStop = true;
+    if (this.runnerId !== null) {
+      clearTimeout(this.runnerId);
     }
-
-    /**
-     *
-     *
-     * @returns {number} - Synthetic time period elapsed since the scheduler's start (in milliseconds) It equals delay*numberOfWaits
-     * @memberof RealScheduler
-     */
-    getSyntheticTimeElapsed() {
-        return this._syntheticTimeElapsed;
+    if (this.options.onStop !== null) {
+      this.options.onStop(this);
     }
+  }
+
+  /**
+   *
+   *
+   * @returns {number} - The time period elapsed since the scheduler's start (in milliseconds)
+   * @memberof RealScheduler
+   */
+  getTimeElapsed() {
+    return this.trueTimeElapsed;
+  }
+
+  /**
+   *
+   *
+   * @returns {number} - Synthetic time period elapsed since the scheduler's
+   * start (in milliseconds) It equals delay*numberOfWaits
+   * @memberof RealScheduler
+   */
+  getSyntheticTimeElapsed() {
+    return this.syntheticTimeElapsed;
+  }
 
 
-    /**
-     *
-     *
-     * @returns {number} - The number the scheduler's callback was called. Starts from 1.
-     * @memberof RealScheduler
-     */
-    getNumberOfCalls() {
-        return this._numberOfCalls;
-    }
+  /**
+   *
+   *
+   * @returns {number} - The number the scheduler's callback was called. Starts from 1.
+   * @memberof RealScheduler
+   */
+  getNumberOfCalls() {
+    return this.numberOfCalls;
+  }
 
-    /**
-     *
-     *
-     * @returns {object} - Scheduler's statistics about its run
-     * ```
-     *   {
-     *      delay: 0,
-     *      numberOfCalls: 0,
-     *      timeElapsed: 0,
-     *      minDelta: 0,
-     *      maxDelta: 0,
-     *      deltaErrorCount: 0
-     *   }
-     * ```
-     * @memberof RealScheduler
-     */
-    getStatistics() {
-        return this._stats;
-    }
+  /**
+   *
+   *
+   * @returns {object} - Scheduler's statistics about its run
+   * ```
+   *   {
+   *      delay: 0,
+   *      numberOfCalls: 0,
+   *      timeElapsed: 0,
+   *      minDelta: 0,
+   *      maxDelta: 0,
+   *      deltaErrorCount: 0
+   *   }
+   * ```
+   * @memberof RealScheduler
+   */
+  getStatistics() {
+    return this.stats;
+  }
 }
 
 
