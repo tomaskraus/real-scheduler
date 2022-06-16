@@ -6,7 +6,7 @@
   "scripts": {
     "testlocal": "tap -Rspec test/*.js",
     "testlocalcoverage": "nyc --reporter=lcov tap -Rspec test/*.js",
-    "makedoc": "jsdoc -c jsdocconf.json -d jsdoc ./src/",
+    "makedoc": "jsdoc -c=jsdocconf.json -d=jsdoc ./src/",
     "test": "npx --trace-uncaught nyc --reporter=text-lcov tap -Rspec test/*.js | npx coveralls"
   },
   "repository": {
